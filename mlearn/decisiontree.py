@@ -1,6 +1,7 @@
 from collections import defaultdict
 import numpy as np
 
+
 class TreeNode(object):
     """决策树节点"""
 
@@ -18,15 +19,17 @@ class TreeNode(object):
         self.left_child = kwargs.get('left_child')
         self.right_child = kwargs.get('right_child')
 
+
 class DecisionTreeClassifier(object):
     """
     决策树分类器。
     本算法采用的是分类与回归树(classification and regression tree, CART)
     """
+
     def __init__(self):
         # 决策树根节点
         self.root = None
-        
+
     def gini(self, cluster):
         '''
         :param cluster: 训练集的一个子集
@@ -39,9 +42,9 @@ class DecisionTreeClassifier(object):
         temp = 1.0
         for k, v in p.items():
             temp -= (v / len(cluster)) ** 2
-        
+
         return temp
-    
+
     def gini_index(self, cluster, attr_index):
         '''
         :param cluster: 训练集的一个子集
@@ -60,11 +63,11 @@ class DecisionTreeClassifier(object):
                 if k1 == k:
                     continue
                 els.extend(v)
-            count = (self.gini(v) * len(v) + self.gini(els) * len(els)) / len(cluster)  
-            attr_gini[k] = count    
+            count = (self.gini(v) * len(v) + self.gini(els) * len(els)) / len(cluster)
+            attr_gini[k] = count
         attr = min(attr_gini, key=attr_gini.get)
         return attr, attr_gini[attr]
-    
+
     def devide_set(self, cluster, index, attr):
         '''
         :param cluster: 给定集合（为训练集的一个子集）
@@ -93,10 +96,10 @@ class DecisionTreeClassifier(object):
         p = {}
         for attr_index in attr_indexs:
             p[attr_index] = (self.gini_index(cluster, attr_index))
-        attr_index = min(p, key = lambda x: p.get(x)[1])
+        attr_index = min(p, key=lambda x: p.get(x)[1])
         attr = p[attr_index][0]
         return attr_index, attr
-    
+
     def build_tree(self, cluster, attr_indexs):
         '''
         :param cluster: 给定数据集
@@ -115,7 +118,7 @@ class DecisionTreeClassifier(object):
             for line in cluster:
                 p[line[-1]] += 1
             return TreeNode(label=max(p, key=p.get))
-        
+
         for i in attr_indexs:
             flag = cluster[i][0]
             f = False
@@ -142,7 +145,6 @@ class DecisionTreeClassifier(object):
                         right_child=right_branch,
                         attr_index=attr_index,
                         attr=attr)
-  
 
     def fit(self, train_x, train_y):
         '''
@@ -154,7 +156,7 @@ class DecisionTreeClassifier(object):
         attr_indexs = set(range(train_x.shape[1]))
         self.train_x = np.c_[train_x, train_y]
         self.root = self.build_tree(self.train_x, attr_indexs)
-     
+
     def predict_one(self, x):
         '''
         :param x:  待预测的样本X
@@ -168,7 +170,7 @@ class DecisionTreeClassifier(object):
             else:
                 node_p = node_p.right_child
         return node_p.label
-        
+
     def predict(self, test_x):
         '''
         :param test_x: 测试集
@@ -176,5 +178,3 @@ class DecisionTreeClassifier(object):
         预测多个值
         '''
         return np.array([self.predict_one(x) for x in test_x])
-
-

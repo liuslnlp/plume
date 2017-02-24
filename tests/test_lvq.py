@@ -1,5 +1,6 @@
 import os
 import sys
+
 sys.path.insert(0, os.path.abspath('.'))
 
 from mlearn.lvq import LVQ
@@ -21,8 +22,9 @@ def main():
     train_x = np.array(train_x)
     train_y = np.array(train_y)
     clf.fit(train_x, train_y)
-    test_x = np.array([[1, 1], [9, 0],[9, 9]])
+    test_x = np.array([[1, 1], [9, 0], [9, 9]])
     print(clf.predict(test_x))
+
 
 if __name__ == '__main__':
     main()

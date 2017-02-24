@@ -1,5 +1,6 @@
 import os
 import sys
+
 sys.path.insert(0, os.path.abspath('.'))
 
 from mlearn.network import BPNetWork
@@ -18,6 +19,7 @@ def main():
     n.fit(train_x, train_y, 10000, 0.1)
     for x in train_x:
         print(x, n.predict(x))
+
 
 if __name__ == '__main__':
     main()

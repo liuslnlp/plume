@@ -15,6 +15,7 @@ class Bagging(object):
     三个方法。
 
     """
+
     def __init__(self, basics):
         '''
         :param basics: 实例化后的基学习器
@@ -64,7 +65,6 @@ class Bagging(object):
         '''
         labels = [i.predict_one(x) for i in self.basics]
         return self.vote(labels)
-
 
     def predict(self, test_x):
         '''

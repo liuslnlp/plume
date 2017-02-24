@@ -22,4 +22,3 @@ def pca(train_x, d):
     args = np.argsort(vals)[:-(d + 1):-1]
     eig_vecs = vecs[:, args]
     return zero_mean_val * eig_vecs
-

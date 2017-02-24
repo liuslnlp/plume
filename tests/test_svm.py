@@ -1,5 +1,6 @@
 import os
 import sys
+
 sys.path.insert(0, os.path.abspath('.'))
 
 from mlearn.svm import SVC
@@ -19,6 +20,7 @@ def test():
     clf.fit(X, y)
     plot_decision_boundary(clf.predict, X, y)
     print('over')
+
 
 def test1():
     train_x = np.array([[1, 1], [0.1, 0.1], [0.5, 0.7], [10, 10], [10, 11]])

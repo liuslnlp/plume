@@ -1,9 +1,11 @@
 import numpy as np
 
+
 class LinearRegression(object):
     """
     线性回归器。
     """
+
     def __init__(self):
         self.weight = None
         self.b = None
@@ -27,7 +29,7 @@ class LinearRegression(object):
         self.weight = 1 / (a2 - np.dot(a3.T, a3) / train_x.shape[0]) * a1
         b = 0.0
         for x, y in zip(train_x, train_y):
-            b += y - np.dot(self.weight.T,  x)
+            b += y - np.dot(self.weight.T, x)
         self.b = 1 / train_x.shape[0] * b
 
     def predict_one(self, x):
@@ -51,6 +53,7 @@ class LogisticRegressionClassifier(object):
     """
     逻辑斯蒂回归分类器，采用牛顿法训练。
     """
+
     def __init__(self, w0=None):
         self.weight = w0
 
@@ -102,7 +105,6 @@ class LogisticRegressionClassifier(object):
                    * self.first_der(train_x, train_y)
             self.weight -= deta
 
-
     def predict_one(self, x):
         '''
         :param x: 测试集合的一个样本
@@ -111,7 +113,7 @@ class LogisticRegressionClassifier(object):
         '''
         x = np.concatenate((np.ones(1), np.array(x)))
         ans = np.dot(self.weight.T, x)
-        return  1 if ans >= 0.5 else 0
+        return 1 if ans >= 0.5 else 0
 
     def predict(self, test_x):
         '''
@@ -120,4 +122,3 @@ class LogisticRegressionClassifier(object):
         预测一个测试集
         '''
         return np.array([self.predict_one(x) for x in test_x])
-

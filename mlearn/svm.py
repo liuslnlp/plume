@@ -1,5 +1,6 @@
 import numpy as np
 
+
 class SVC(object):
     """
     支持向量机(Support Vector Machine)二分类器, 默认的核函数是
@@ -7,6 +8,7 @@ class SVC(object):
     使用时，正类用1表示，负类用-1表示。
     如果有必要，可自行编写新的核函数。
     """
+
     def __init__(self, C, e=0.3, kernel='poly'):
         '''
         :param C: 常数C，用来控制非线性部分的权重
@@ -116,7 +118,6 @@ class SVC(object):
              - y2 * self.kernel(x2, x1) * (self.alpha[2] - alpha2) \
              + self.bias
 
-
         b2 = -1 * self.error(i2) \
              - y1 * self.kernel(x1, x2) * (self.alpha[i1] - alpha_old_1) \
              - y2 * self.kernel(x2, x2) * (self.alpha[2] - alpha2) \
@@ -133,7 +134,6 @@ class SVC(object):
             return True
         else:
             return False
-
 
     def error(self, index):
         '''
@@ -168,6 +168,3 @@ class SVC(object):
         :return: 测试集样本的类别
         '''
         return np.array([self.predict_one(x) for x in test_x])
-
-
-

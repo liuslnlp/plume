@@ -1,30 +1,56 @@
 import os
 import sys
+
 sys.path.insert(0, os.path.abspath('.'))
-from mlearn.hmm import HMM
+from mlearn.hmm import *
+
 import numpy as np
 
-def main():
-    A = [[0.5, 0.2, 0.3],
-         [0.3, 0.5, 0.2],
-         [0.2, 0.3, 0.5]]
-    A = np.array(A)
+A = [[0.5, 0.2, 0.3],
+     [0.3, 0.5, 0.2],
+     [0.2, 0.3, 0.5]]
+A = np.array(A)
 
-    B = [[0.5, 0.5],
-         [0.4, 0.6],
-         [0.7, 0.3]]
+B = [[0.5, 0.5],
+     [0.4, 0.6],
+     [0.7, 0.3]]
 
-    B = np.array(B)
+B = np.array(B)
 
-    pi = [0.2, 0.4, 0.4]
-    V = ["红", "白"]
+pi = np.array([0.2, 0.4, 0.4])
 
-    h = HMM(A, B, V, pi)
-    p = h.predict(['红', '白', '红'])
-    print(p)
-    p = h.predict(['红', '白', '红'], "else")
-    print(p)
+
+def test_for():
+    print(forward_probability(A, B, pi, np.array([0, 1, 0])))
+
+
+def test_back():
+    print(backward_probability(A, B, pi, np.array([0, 1, 0])))
+
+
+def test_pr_ob():
+    print(predict_ob_probability(A, B, pi, np.array([0, 1, 0])))
+
+
+def test_gamma():
+    print(gamma(A, B, pi, np.array([0, 1, 0])))
+
+
+def test_xi():
+    print(xi(A, B, pi, np.array([0, 1, 0])))
+
+
+def test_get_optimal_path():
+    o = np.array([0, 1, 0])
+    print(get_optimal_path(A, B, pi, o))
+
+
+def test_model_param():
+    A, B, pi = get_model_param(np.array([0, 1, 0]), 3, 2, error=0.2)
+    print('A: ', A)
+    print('B: ', B)
+    print('pi:', pi)
 
 
 if __name__ == '__main__':
-    main()
+    test_model_param()

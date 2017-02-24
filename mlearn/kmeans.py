@@ -1,6 +1,7 @@
 import numpy as np
 from collections import defaultdict
 
+
 class KMeans(object):
     """K均值(K-means)聚类算法"""
 
@@ -13,14 +14,14 @@ class KMeans(object):
         self.clusters = defaultdict(list)
         self.threshold = threshold
         self.k_vec = None
-    
+
     def choose_init_vec(self, train_x):
         '''
         :param train_x: 训练集X
         :return: 初始化后的K向量
         初始化K向量
         '''
-        indexs = np.random.choice(train_x.shape[0], 
+        indexs = np.random.choice(train_x.shape[0],
                                   self.n_clusters, replace=False)
         return train_x.copy()[indexs]
 
@@ -40,13 +41,13 @@ class KMeans(object):
             for k, v in self.clusters.items():
                 l = np.array(v)
                 mean = l.mean(axis=0)
-                if np.linalg.norm(self.k_vec[k] - mean)  > self.threshold:
+                if np.linalg.norm(self.k_vec[k] - mean) > self.threshold:
                     again = True
                     self.k_vec[k] = mean
-                    
+
             if not again:
                 break
-                            
+
     def predict_one(self, x):
         '''
         :param x: 测试集的一个样本
@@ -63,5 +64,3 @@ class KMeans(object):
         预测一个测试集
         '''
         return [self.predict_one(x) for x in test_x]
-
-

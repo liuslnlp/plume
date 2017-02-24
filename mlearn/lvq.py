@@ -5,6 +5,7 @@ class LVQ(object):
     """
     学习向量量化(Learning Vector Quantization, LVQ)聚类算法。
     """
+
     def __init__(self, ratio=0.2, rounds=1000):
         '''
         :param ratio: 步长，学习率
@@ -26,7 +27,7 @@ class LVQ(object):
         self.map = []
         for label in labels:
             self.map.append(label)
-            
+
         for i in range(self.rounds):
             index = np.random.choice(train_x.shape[0])
             x = train_x[index]
@@ -38,7 +39,7 @@ class LVQ(object):
                 self.p_vec[p_min_index] += temp
             else:
                 self.p_vec[p_min_index] -= temp
-     
+
     def predict_one(self, x):
         '''
         :param x: 测试集合的一个样本

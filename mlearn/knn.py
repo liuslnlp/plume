@@ -1,7 +1,8 @@
 from math import pow
 from collections import defaultdict
-from multiprocessing import  Process, cpu_count, Queue
+from multiprocessing import Process, cpu_count, Queue
 import numpy as np
+
 
 class Neighbor(object):
     """
@@ -16,7 +17,7 @@ class Neighbor(object):
         """
         self.class_label = class_label
         self.distance = distance
-    
+
 
 class KNeighborClassifier(object):
     """
@@ -36,7 +37,7 @@ class KNeighborClassifier(object):
             self.p = 2
         elif metric == 'manhattan':
             self.p = 1
-    
+
     def fit(self, train_x, train_y):
         """
         :param train_x: 训练集X.
@@ -46,7 +47,7 @@ class KNeighborClassifier(object):
         """
         self.train_x = train_x.astype(np.float32)
         self.train_y = train_y
-    
+
     def predict_one(self, one_test):
         '''
         :param one_test: 测试集合的一个样本
@@ -55,7 +56,7 @@ class KNeighborClassifier(object):
         '''
         # 用于储存所有样本点与测试点之间的距离
         neighbors = []
-        for x, y in  zip(self.train_x, self.train_y):
+        for x, y in zip(self.train_x, self.train_y):
             distance = self.get_distance(x, one_test)
             neighbors.append(Neighbor(y, distance))
 
@@ -65,13 +66,13 @@ class KNeighborClassifier(object):
         # 如果近邻值大于训练集的样本数，则用后者取代前者
         if self.n_neighbors > len(self.train_x):
             self.n_neighbors = len(self.train_x)
-        
+
         # 用于储存不同标签的近邻数
         cls_count = defaultdict(int)
 
         for i in range(self.n_neighbors):
             cls_count[neighbors[i].class_label] += 1
-        
+
         # 返回结果
         ans = max(cls_count, key=cls_count.get)
         return ans
@@ -83,7 +84,7 @@ class KNeighborClassifier(object):
         预测一个测试集
         '''
         return np.array([self.predict_one(x) for x in test_x])
-    
+
     def get_distance(self, input, x):
         """
         :param input: 训练集的一个样本.
@@ -103,6 +104,7 @@ class ParallelKNClassifier(KNeighborClassifier):
     """
     并行K近邻算法分类器
     """
+
     def __init__(self, n_neighbors=5, metric='euclidean'):
         super(ParallelKNClassifier, self).__init__(n_neighbors, metric)
         self.task_queue = Queue()
@@ -119,7 +121,6 @@ class ParallelKNClassifier(KNeighborClassifier):
             id, one = self.task_queue.get()
             ans = self.predict_one(one)
             self.ans_queue.put((id, ans))
-
 
     def predict(self, test_x):
         '''
@@ -145,5 +146,3 @@ class ParallelKNClassifier(KNeighborClassifier):
         ans.sort(key=lambda x: x[0])
         ans = np.array([i[1] for i in ans])
         return ans
-
-

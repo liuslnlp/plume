@@ -1,9 +1,11 @@
 import os
 import sys
+
 sys.path.insert(0, os.path.abspath('.'))
 
 from mlearn.kmeans import KMeans
 import numpy as np
+
 
 def main():
     clf = KMeans(3)
@@ -16,6 +18,7 @@ def main():
     clf.fit(train_x)
     print(clf.clusters)
     print(clf.predict_one(np.array([9, 9])))
+
 
 if __name__ == '__main__':
     main()

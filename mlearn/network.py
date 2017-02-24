@@ -1,10 +1,11 @@
 import numpy as np
 
+
 class BPNetWork(object):
     """
     全连接神经网络，采用BP算法训练。
     """
-    
+
     def __init__(self, layers, act_func='tanh'):
         """
         :param layers: 神经网络的结构
@@ -110,4 +111,3 @@ class BPNetWork(object):
         gradients.reverse()
         for i in range(len(self.weights)):
             self.weights[i] += rate * self.networks[i].reshape((-1, 1)) * gradients[i]
-

@@ -12,7 +12,7 @@
 * 线性回归(Linear Regression)
 * 逻辑斯蒂回归(Logistic Regression)
 * Bagging算法
-* 神经网络(ANN)
+* 神经网络(BP网)
 * 隐马尔科夫模型(HMM)
 * K-Means聚类算法
 * LVQ聚类算法

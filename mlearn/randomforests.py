@@ -25,6 +25,7 @@ class RandomForestsClassifier(object):
     """
     随机森林（Random Forests）分类器，使用的决策树是CART树。
     """
+
     def __init__(self, tree_num=5):
         '''
         :param tree_num: 森林使用决策树的个数
@@ -32,7 +33,7 @@ class RandomForestsClassifier(object):
         self.tree_num = tree_num
         self.roots = []
         self.k = None
-    
+
     def gini(self, cluster):
         '''
         :param cluster: 训练集的一个子集
@@ -45,9 +46,9 @@ class RandomForestsClassifier(object):
         temp = 1.0
         for k, v in p.items():
             temp -= (v / len(cluster)) ** 2
-        
+
         return temp
-    
+
     def gini_index(self, cluster, attr_index):
         '''
         :param cluster: 训练集的一个子集
@@ -65,11 +66,11 @@ class RandomForestsClassifier(object):
                 if k1 == k:
                     continue
                 els.extend(v)
-            count = (self.gini(v) * len(v) + self.gini(els) * len(els)) / len(cluster)  
-            attr_gini[k] = count    
+            count = (self.gini(v) * len(v) + self.gini(els) * len(els)) / len(cluster)
+            attr_gini[k] = count
         attr = min(attr_gini, key=attr_gini.get)
         return attr, attr_gini[attr]
-    
+
     def devide_set(self, cluster, index, attr):
         '''
         :param cluster: 给定集合（为训练集的一个子集）
@@ -101,10 +102,10 @@ class RandomForestsClassifier(object):
         p = {}
         for attr_index in new_attr_indexs:
             p[attr_index] = (self.gini_index(cluster, attr_index))
-        attr_index = min(p, key = lambda x: p.get(x)[1])
+        attr_index = min(p, key=lambda x: p.get(x)[1])
         attr = p[attr_index][0]
         return attr_index, attr
-    
+
     def vote(self, cluster):
         '''
         :param cluster: 给定数据集
@@ -159,7 +160,7 @@ class RandomForestsClassifier(object):
                         right_child=right_branch,
                         attr_index=attr_index,
                         attr=attr)
-  
+
     def choose_set(self, train_x):
         '''
         :param train_x: 总数据集
@@ -183,7 +184,7 @@ class RandomForestsClassifier(object):
             new_train_x = self.choose_set(self.train_x)
             self.roots.append(self.build_tree(new_train_x, attr_indexs))
         self.roots = np.array(self.roots)
-     
+
     def predict_in_one_tree(self, root, x):
         '''
         :param root: 选定的树的根结点
@@ -198,7 +199,7 @@ class RandomForestsClassifier(object):
             else:
                 node_p = node_p.right_child
         return node_p.label
-    
+
     def predict_one(self, x):
         '''
         :param x:  待预测的样本X
@@ -210,7 +211,7 @@ class RandomForestsClassifier(object):
             label = self.predict_in_one_tree(root, x)
             count[label] += 1
         return max(count, key=count.get)
-        
+
     def predict(self, test_x):
         '''
         :param test_x: 测试集
@@ -218,4 +219,3 @@ class RandomForestsClassifier(object):
         预测多个值
         '''
         return np.array([self.predict_one(x) for x in test_x])
-    

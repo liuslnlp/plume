@@ -1,9 +1,11 @@
 import os
 import sys
+
 sys.path.insert(0, os.path.abspath('.'))
 
 from mlearn.bagging import Bagging
 import numpy as np
+
 
 def main():
     from mlearn.knn import KNeighborClassifier

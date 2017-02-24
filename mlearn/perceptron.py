@@ -16,7 +16,7 @@ class Perceptron(object):
         self.weight = w0
         self.bias = b0
         self.eta = eta
-    
+
     def fit(self, train_x, train_y):
         """
         :param train_x: 训练集X。 x∈Rn
@@ -31,7 +31,7 @@ class Perceptron(object):
                     cycle_again = True
                     self.weight += self.eta * y * x
                     self.bias += self.eta * y
-                    
+
             if not cycle_again:
                 break
 
@@ -50,5 +50,3 @@ class Perceptron(object):
         返回感知机的参数
         '''
         return (self.weight, self.bias)
-
-

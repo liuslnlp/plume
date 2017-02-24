@@ -1,9 +1,11 @@
 import os
 import sys
+
 sys.path.insert(0, os.path.abspath('.'))
 
 from mlearn.perceptron import Perceptron
 import numpy as np
+
 
 def main():
     train_x = np.array([[3, 3], [4, 3], [1, 1]])
@@ -14,6 +16,7 @@ def main():
     p = Perceptron(w0, b0, eta)
     p.fit(train_x, train_y)
     print(p.predict(train_x))
+
 
 if __name__ == '__main__':
     main()
