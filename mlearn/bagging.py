@@ -29,8 +29,6 @@ class Bagging(object):
         从给定数据集中有放回的抽取一个容量为size(train_x)的新数据集
         '''
         indexs = np.random.choice(train.shape[0], train.shape[0])
-        # print(indexs)
-        # print(type(train.copy()[indexs]))
         return train.copy()[indexs]
 
     def vote(self, labels):
@@ -53,8 +51,6 @@ class Bagging(object):
         train = np.c_[train_x, train_y]
         for i in self.basics:
             new_train = self.choose_set(train)
-            # print("x ", new_train[:, :-1])
-            # print("y", new_train[:, -1])
             i.fit(new_train[:, :-1], new_train[:, -1])
 
     def predict_one(self, x):

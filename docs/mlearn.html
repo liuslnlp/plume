@@ -2,30 +2,30 @@
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 
-<html xmlns="http://www.w3.org/1999/xhtml" lang="zh-cn">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="cn">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>mlearn package &mdash; Machine Learning by Python v1.0.0 documentation</title>
+    <title>mlearn package &mdash; Machine Learning by Python V1.0.0 documentation</title>
     
-    <link rel="stylesheet" href="static/alabaster.css" type="text/css" />
-    <link rel="stylesheet" href="static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     'v1.0.0',
+        VERSION:     'V1.0.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
       };
     </script>
-    <script type="text/javascript" src="static/jquery.js"></script>
-    <script type="text/javascript" src="static/underscore.js"></script>
-    <script type="text/javascript" src="static/doctools.js"></script>
-    <link rel="top" title="Machine Learning by Python v1.0.0 documentation" href="index.html" />
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="Machine Learning by Python V1.0.0 documentation" href="index.html" />
    
-  <link rel="stylesheet" href="static/custom.css" type="text/css" />
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
   
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
@@ -323,74 +323,175 @@ predict(test_x)</dd>
 </div>
 <div class="section" id="module-mlearn.hmm">
 <span id="mlearn-hmm-module"></span><h2>mlearn.hmm module<a class="headerlink" href="#module-mlearn.hmm" title="Permalink to this headline">¶</a></h2>
-<p>注意，本文件只完成了部分，预测算法后期补上</p>
-<dl class="class">
-<dt id="mlearn.hmm.HMM">
-<em class="property">class </em><code class="descclassname">mlearn.hmm.</code><code class="descname">HMM</code><span class="sig-paren">(</span><em>state_trans</em>, <em>ob_probability</em>, <em>vis_set</em>, <em>pi</em><span class="sig-paren">)</span><a class="headerlink" href="#mlearn.hmm.HMM" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
-<p>隐马尔可夫模型(Hidden Markov Model，HMM)，包含前向和后项两种算法。
-预测时，需给定模型 lamda = (A, B, pi),
-观测集合V,及观测序列O</p>
-<dl class="method">
-<dt id="mlearn.hmm.HMM.backward_alg">
-<code class="descname">backward_alg</code><span class="sig-paren">(</span><em>test</em><span class="sig-paren">)</span><a class="headerlink" href="#mlearn.hmm.HMM.backward_alg" title="Permalink to this definition">¶</a></dt>
+<p>隐马尔科夫模型相关算法，包含观测序列概率算法，学习算法
+和预测算法。</p>
+<dl class="docutils">
+<dt>求一个观测序列出现的概率：</dt>
+<dd>predict_ob_probability(state_trans, ob, pi, obseq)</dd>
+<dt>给定观测序列，预测状态转移矩阵，观测矩阵，初始状态概率向量：</dt>
+<dd>get_model_param(obseq, status_count, ob_count, error=0.2)</dd>
+<dt>求最优观测路径：</dt>
+<dd>get_optimal_path(state_trans, ob, pi, obseq)</dd>
+</dl>
+<dl class="function">
+<dt id="mlearn.hmm.backward_probability">
+<code class="descclassname">mlearn.hmm.</code><code class="descname">backward_probability</code><span class="sig-paren">(</span><em>state_trans</em>, <em>ob</em>, <em>pi</em>, <em>obseq</em><span class="sig-paren">)</span><a class="headerlink" href="#mlearn.hmm.backward_probability" title="Permalink to this definition">¶</a></dt>
 <dd><table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>test</strong> &#8211; 观测序列.</td>
-</tr>
-</tbody>
-</table>
-<p>后向算法</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="mlearn.hmm.HMM.find_index">
-<code class="descname">find_index</code><span class="sig-paren">(</span><em>observations</em><span class="sig-paren">)</span><a class="headerlink" href="#mlearn.hmm.HMM.find_index" title="Permalink to this definition">¶</a></dt>
-<dd><table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>observations</strong> &#8211; 观测值.</td>
-</tr>
-</tbody>
-</table>
-<p>辅助函数用于求给定观测值对应的下标</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="mlearn.hmm.HMM.forward_alg">
-<code class="descname">forward_alg</code><span class="sig-paren">(</span><em>test</em><span class="sig-paren">)</span><a class="headerlink" href="#mlearn.hmm.HMM.forward_alg" title="Permalink to this definition">¶</a></dt>
-<dd><table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>test</strong> &#8211; 观测序列.</td>
-</tr>
-</tbody>
-</table>
-<p>前向算法</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="mlearn.hmm.HMM.predict">
-<code class="descname">predict</code><span class="sig-paren">(</span><em>test</em>, <em>algorithm='forward'</em><span class="sig-paren">)</span><a class="headerlink" href="#mlearn.hmm.HMM.predict" title="Permalink to this definition">¶</a></dt>
-<dd><table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>test</strong> &#8211; 观测序列.</li>
-<li><strong>algorithm</strong> &#8211; 使用的算法.</li>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>state_trans</strong> &#8211; 状态转移矩阵</li>
+<li><strong>ob</strong> &#8211; 观测概率矩阵</li>
+<li><strong>pi</strong> &#8211; 初始状态概率向量</li>
+<li><strong>obseq</strong> &#8211; 观测序列</li>
 </ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">后向概率矩阵</p>
 </td>
 </tr>
 </tbody>
 </table>
-<p>预测</p>
+<p>观测序列的后向算法。</p>
 </dd></dl>
 
+<dl class="function">
+<dt id="mlearn.hmm.forward_probability">
+<code class="descclassname">mlearn.hmm.</code><code class="descname">forward_probability</code><span class="sig-paren">(</span><em>state_trans</em>, <em>ob</em>, <em>pi</em>, <em>obseq</em><span class="sig-paren">)</span><a class="headerlink" href="#mlearn.hmm.forward_probability" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>state_trans</strong> &#8211; 状态转移矩阵</li>
+<li><strong>ob</strong> &#8211; 观测概率矩阵</li>
+<li><strong>pi</strong> &#8211; 初始状态概率向量</li>
+<li><strong>obseq</strong> &#8211; 观测序列</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">前向概率矩阵</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>观测序列的前向算法。</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="mlearn.hmm.gamma">
+<code class="descclassname">mlearn.hmm.</code><code class="descname">gamma</code><span class="sig-paren">(</span><em>state_trans</em>, <em>ob</em>, <em>pi</em>, <em>obseq</em><span class="sig-paren">)</span><a class="headerlink" href="#mlearn.hmm.gamma" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>state_trans</strong> &#8211; 状态转移矩阵</li>
+<li><strong>ob</strong> &#8211; 观测概率矩阵</li>
+<li><strong>pi</strong> &#8211; 初始状态概率向量</li>
+<li><strong>obseq</strong> &#8211; 观测序列</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">在t时刻处于状态qi的概率矩阵。</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>求t时刻处于状态q的概率 即 gamma[t][i] = P(it = qi | O, lambda)</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="mlearn.hmm.get_model_param">
+<code class="descclassname">mlearn.hmm.</code><code class="descname">get_model_param</code><span class="sig-paren">(</span><em>obseq</em>, <em>status_count</em>, <em>ob_count</em>, <em>error=0.2</em><span class="sig-paren">)</span><a class="headerlink" href="#mlearn.hmm.get_model_param" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>obseq</strong> &#8211; 观测序列</li>
+<li><strong>status_count</strong> &#8211; 状态的种数</li>
+<li><strong>ob_count</strong> &#8211; 观测的种数</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">state_trans, ob, pi</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Baum-Welch学习算法。
+给定观测序列，预测状态转移矩阵，观测矩阵，初始状态概率向量。</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="mlearn.hmm.get_optimal_path">
+<code class="descclassname">mlearn.hmm.</code><code class="descname">get_optimal_path</code><span class="sig-paren">(</span><em>state_trans</em>, <em>ob</em>, <em>pi</em>, <em>obseq</em><span class="sig-paren">)</span><a class="headerlink" href="#mlearn.hmm.get_optimal_path" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>state_trans</strong> &#8211; 状态转移矩阵</li>
+<li><strong>ob</strong> &#8211; 观测概率矩阵</li>
+<li><strong>pi</strong> &#8211; 初始状态概率向量</li>
+<li><strong>obseq</strong> &#8211; 观测序列</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">最优观测路径</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>求最优观测路径的维特比算法。</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="mlearn.hmm.predict_ob_probability">
+<code class="descclassname">mlearn.hmm.</code><code class="descname">predict_ob_probability</code><span class="sig-paren">(</span><em>state_trans</em>, <em>ob</em>, <em>pi</em>, <em>obseq</em><span class="sig-paren">)</span><a class="headerlink" href="#mlearn.hmm.predict_ob_probability" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>state_trans</strong> &#8211; 状态转移矩阵</li>
+<li><strong>ob</strong> &#8211; 观测概率矩阵</li>
+<li><strong>pi</strong> &#8211; 初始状态概率向量</li>
+<li><strong>obseq</strong> &#8211; 观测序列</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">观测序列概率</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>观测序列概率算法，求一个观测序列出现的概率，默认采用前向算法。</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="mlearn.hmm.xi">
+<code class="descclassname">mlearn.hmm.</code><code class="descname">xi</code><span class="sig-paren">(</span><em>state_trans</em>, <em>ob</em>, <em>pi</em>, <em>obseq</em><span class="sig-paren">)</span><a class="headerlink" href="#mlearn.hmm.xi" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>state_trans</strong> &#8211; 状态转移矩阵</li>
+<li><strong>ob</strong> &#8211; 观测概率矩阵</li>
+<li><strong>pi</strong> &#8211; 初始状态概率向量</li>
+<li><strong>obseq</strong> &#8211; 观测序列</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">在t时刻处于状态qi切在t+1处于状态qj的概率矩阵和。</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>在t时刻处于状态qi切在t+1处于状态qj的概率 即 xi[t][i] = P(it = qi, it+1 = qj | O, lambda)</p>
 </dd></dl>
 
 </div>
@@ -1022,7 +1123,7 @@ predict(test_x)</dd>
 </div>
 <div class="section" id="module-mlearn.pca">
 <span id="mlearn-pca-module"></span><h2>mlearn.pca module<a class="headerlink" href="#module-mlearn.pca" title="Permalink to this headline">¶</a></h2>
-<p>主成份分析</p>
+<p>主成份分析法(PCA)</p>
 <dl class="function">
 <dt id="mlearn.pca.pca">
 <code class="descclassname">mlearn.pca.</code><code class="descname">pca</code><span class="sig-paren">(</span><em>train_x</em>, <em>d</em><span class="sig-paren">)</span><a class="headerlink" href="#mlearn.pca.pca" title="Permalink to this definition">¶</a></dt>

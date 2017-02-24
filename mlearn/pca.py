@@ -1,5 +1,5 @@
 '''
-主成份分析
+主成份分析法(PCA)
 '''
 import numpy as np
 
