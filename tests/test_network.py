@@ -18,7 +18,7 @@ def main():
     n = BPNetWork((2, 2, 1))
     n.fit(train_x, train_y, 10000, 0.1)
     for x in train_x:
-        print(x, n.predict(x))
+        print(x, n.predict_one(x))
 
 
 if __name__ == '__main__':

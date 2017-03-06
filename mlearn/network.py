@@ -74,13 +74,21 @@ class BPNetWork(object):
             self.update(train_x[i])
             self.back_propagate(train_y[i], learn_rate)
 
-    def predict(self, test_x):
+    def predict_one(self, x):
         '''
-        :param test_x: 测试集合
+        :param x: 测试集合
         :return: 预测值
         '''
-        self.update(test_x)
+        self.update(x)
         return self.networks[-1].copy()
+
+    def predict(self, test_x):
+        '''
+        :param test_x: 测试集
+        :return: 测试集的预测值
+        预测一个测试集
+        '''
+        return np.array([self.predict_one(x) for x in test_x])       
 
     def update(self, inputs):
         '''
