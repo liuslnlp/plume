@@ -3,9 +3,8 @@ import sys
 
 sys.path.insert(0, os.path.abspath('.'))
 
-from mlearn.decisiontree import BoostingTreeClassifier
+from mlearn.boostingtree import BoostingTree
 import numpy as np
-
 
 def main():
     train_x = [
@@ -16,9 +15,9 @@ def main():
         ['没钱', '没房', '长得帅'],
     ]
     train_x = np.array(train_x)
-    train_y = np.array(['嫁', '嫁', '嫁', '不嫁', '不嫁'])
+    train_y = np.array([1, 1, 1, -1, -1])
     x = train_x[4]
-    clf = BoostingTreeClassifier(max_depth=2)
+    clf = BoostingTree(50)
     clf.fit(train_x, train_y)
     print(clf.predict_one(x))
 

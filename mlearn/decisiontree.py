@@ -20,15 +20,16 @@ class TreeNode(object):
         self.right_child = kwargs.get('right_child')
 
 
-class DecisionTreeClassifier(object):
+class BoostingTreeClassifier(object):
     """
     决策树分类器。
     本算法采用的是分类与回归树(classification and regression tree, CART)
     """
 
-    def __init__(self):
+    def __init__(self, max_depth=5):
         # 决策树根节点
         self.root = None
+        self.max_depth = max_depth
 
     def gini(self, cluster):
         '''
@@ -100,7 +101,7 @@ class DecisionTreeClassifier(object):
         attr = p[attr_index][0]
         return attr_index, attr
 
-    def build_tree(self, cluster, attr_indexs):
+    def build_tree(self, cluster, attr_indexs, depth):
         '''
         :param cluster: 给定数据集
         :param attr_indexs: 给定的可供切分的特征编号的集合
@@ -108,16 +109,19 @@ class DecisionTreeClassifier(object):
         递归构建决策树
         '''
         flag = cluster[0, -1]
+
+        if depth >= self.max_depth or not attr_indexs:
+            p = defaultdict(int)
+            for line in cluster:
+                p[line[-1]] += 1
+            return TreeNode(label=max(p, key=p.get))
+
         for i in cluster[:, -1]:
             if i != flag:
                 break
         else:
             return TreeNode(label=flag)
-        if not attr_indexs:
-            p = defaultdict(int)
-            for line in cluster:
-                p[line[-1]] += 1
-            return TreeNode(label=max(p, key=p.get))
+        
 
         for i in attr_indexs:
             flag = cluster[i][0]
@@ -139,8 +143,8 @@ class DecisionTreeClassifier(object):
 
         new_attr_indexs = attr_indexs - set([attr_index])
 
-        left_branch = self.build_tree(left, new_attr_indexs)
-        right_branch = self.build_tree(right, new_attr_indexs)
+        left_branch = self.build_tree(left, new_attr_indexs, depth + 1)
+        right_branch = self.build_tree(right, new_attr_indexs, depth + 1)
         return TreeNode(left_child=left_branch,
                         right_child=right_branch,
                         attr_index=attr_index,
@@ -155,7 +159,7 @@ class DecisionTreeClassifier(object):
         '''
         attr_indexs = set(range(train_x.shape[1]))
         self.train_x = np.c_[train_x, train_y]
-        self.root = self.build_tree(self.train_x, attr_indexs)
+        self.root = self.build_tree(self.train_x, attr_indexs, 0)
 
     def predict_one(self, x):
         '''

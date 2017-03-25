@@ -2,30 +2,15 @@
 暂时没有写完。
 """
 import numpy as np
-from .decisiontree import DecisionTreeClassifier
+from .decisiontree import BoostingTreeClassifier
 
-class BaseClassifier(object):
-    def __init__(self, train_x, train_y, weights):
-        self.train_x = train_x
-        self.train_y = train_y
-
-    def train(self):
-        pass
-    
-    def predict(self):
-        pass
-    
-    def predict_one(self):
-        pass
-    
-    def loss_func(self, pre_label, label):
-        return (pre_label - label) ** 2
 
 class BoostingTree(object):
     
     def __init__(self, rounds):
         self.rounds = rounds
         self.alphas = np.zeros(rounds)
+        self.clfs = []
 
     def fit(self, train_x, train_y):
         '''
@@ -34,39 +19,60 @@ class BoostingTree(object):
         :return: None
         拟合提升树。
         '''
-        self.train_x = train_x
-        self.train_y = train_y
+        self.init_train_x = train_x.copy()
+        self.init_train_y = train_y.copy()
+        self.train_x = train_x.copy()
+        self.train_y = train_y.copy()
 
         self.weights = np.array([1 / train_x.shape[0]] * train_x.shape[0])
+
         for i in range(self.rounds):
-            clf = DecisionTreeClassifier()
+            clf = BoostingTreeClassifier(max_depth=2)
             clf.fit(train_x, train_y)
-            pre_y = clf.predict(train_x)
+            self.clfs.append(clf)
+            pre_y = clf.predict(train_x).astype(np.int32)
             error = self.get_error(pre_y)
+            if error > 0.5:
+                break
             alpha = self.get_coefficient(error)
             self.alphas[i] = alpha
             self.update_weights(alpha, pre_y)
+            self.update_train_set()
 
-    
 
     def update_weights(self, alpha, pre_y):
         Zm = 0.0
         w = np.zeros(self.train_y.shape[0])
         new_weights = np.zeros(self.train_y.shape[0])
         for i in range(self.train_y.shape[0]):
+            
             w[i] = self.weights[i] * np.exp(-1 * alpha * self.train_y[i] * pre_y[i])
             Zm += w[i]
         for i in range(self.train_y.shape[0]):
             new_weights[i] = self.weights[i] / Zm * w[i]
         self.weights = new_weights
     
+    def update_train_set(self):
+        new_weights = (self.weights * 10).astype(np.int8)
+        self.train_x = np.zeros(np.sum(new_weights))
+        self.train_y = np.zeros(np.sum(new_weights))
+
+        for i in range(self.train_x.shape[0]):
+            for _ in new_weights:
+                self.train_x.append(self.init_train_x[i])
+                self.train_y.append(self.init_train_y[i])
+
     def get_error(self, pre_y):
         indexs = np.where(self.train_y != pre_y)[0]
+        if not indexs:
+            return 0.01
         return np.sum(self.weights[indexs])
 
     def get_coefficient(self, error):
         return 1 / 2 * np.log((1 - error) / error)
 
+    def sign(self, x):
+        return 1 if x >=0 else -1
 
     def predict_one(self, x):
         '''
@@ -74,7 +80,11 @@ class BoostingTree(object):
         :return: X所属的类别
         预测单个值
         '''
-        pass
+        ans = 0.0
+        for clf, alpha in zip(self.clfs, self.alphas):
+            ans += float(clf.predict_one(x)) * alpha
+        
+        return self.sign(ans)
 
     def predict(self, test_x):
         '''

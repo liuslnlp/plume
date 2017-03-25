@@ -43,13 +43,15 @@ print(clf.predict([["2", "S"]]))
 * 感知机
 * 朴素贝叶斯分类器
 * 决策树(Decision Tree)
+* 梯度提升树
 * 随机森林(Random Forests)
 * 支持向量机(Support Vector Machine)
 * 线性回归(Linear Regression)
 * 逻辑斯蒂回归(Logistic Regression)
 * Bagging算法
+* PageRank算法  
 * 神经网络(BP算法)
-* 隐马尔科夫模型(HMM)
+* 隐马尔可夫模型
 * K-Means聚类算法
 * LVQ聚类算法
 * 主成份分析法(PCA)
