@@ -69,7 +69,7 @@ class BPNetWork(object):
         拟合神经网络
         '''
 
-        for i in range(epochs):
+        for _ in range(epochs):
             i = np.random.randint(train_x.shape[0], high=None)
             self.update(train_x[i])
             self.back_propagate(train_y[i], learn_rate)
