@@ -1,22 +1,17 @@
-import os
-import sys
-
-sys.path.insert(0, os.path.abspath('.'))
-
-from mlearn.perceptron import Perceptron
+from plume.perceptron import PerceptronClassifier
 import numpy as np
 
+x_train = np.array([[3, 3], [4, 3], [1, 1]])
+y_train = np.array([1, 1, -1])
 
-def main():
-    train_x = np.array([[3, 3], [4, 3], [1, 1]])
-    train_y = np.array([1, 1, -1])
-    eta = 1
-    w0 = [0, 0]
-    b0 = 0
-    p = Perceptron(w0, b0, eta)
-    p.fit(train_x, train_y)
-    print(p.predict(train_x))
+clf = PerceptronClassifier(dual=False)
 
+clf.fit(x_train, y_train)
+print(clf.get_model())
+print(clf.predict(x_train))
 
-if __name__ == '__main__':
-    main()
+clf1 = PerceptronClassifier()
+
+clf1.fit(x_train, y_train)
+print(clf1.get_model())
+print(clf1.predict(x_train))

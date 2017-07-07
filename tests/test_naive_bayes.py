@@ -1,27 +1,32 @@
-import os
-import sys
-
-sys.path.insert(0, os.path.abspath('.'))
-
-from mlearn.naive_bayes import NaiveBayesClassifier
+from plume.naive_bayes import GaussianNB, MultinomialNB
+from sklearn.datasets import load_iris
+from sklearn.naive_bayes import GaussianNB as SKGaussianNB
 import numpy as np
 
+def test_gaussiannb():
+    iris = load_iris()
 
-def main():
-    train_x = [["1", "S"], ["1", "M"], ["1", "M"],
-               ["1", "S"], ["1", "S"], ["2", "S"],
-               ["2", "M"], ["2", "M"], ["2", "L"],
-               ["2", "L"], ["3", "L"], ["3", "M"],
-               ["3", "M"], ["3", "L"], ["3", "L"]]
-    train_y = ["-1", "-1", "1", "1", "-1",
-               "-1", "-1", "1", "1", "1",
-               "1", "1", "1", "1", "-1"]
+    clf = GaussianNB()
 
-    n = NaiveBayesClassifier()
-    n.fit(train_x, train_y)
-    ans = n.predict([["2", "S"]])
-    print(ans)
+    clf.fit(iris.data, iris.target)
+
+    y_pred = clf.predict(iris.data)
+    print(y_pred)
+
+    clf_ = SKGaussianNB()
+    clf_.fit(iris.data, iris.target)
+    print(clf_.predict(iris.data))
+
+
+    print(iris.target)
+
+def test_multinomialnb():
+    X = np.random.randint(5, size=(6, 100))
+    y = np.array([1, 2, 3, 4, 5, 6])
+    clf = MultinomialNB()
+    clf.fit(X, y)
+    print(clf.predict(X[2:3]))
 
 
 if __name__ == '__main__':
-    main()
+    test_multinomialnb()

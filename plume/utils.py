@@ -1,19 +1,18 @@
-"""
-工具包，包含了一些实用的函数。
-"""
-
 import numpy as np
 import matplotlib.pyplot as plt
 
+def check_X_y(X, y):
+    if x.shape[0] != y.shape[0]:
+        raise ValueError('Shape does not match')
+    return X, y
 
-def plot_decision_boundary(pred_func, X, y):
-    '''
+def plot_decision_boundary(pred_func, X, y, title=None):
+    """分类器画图函数，可画出样本点和决策边界
     :param pred_func: predicet函数
     :param X: 训练集X
     :param y: 训练集Y
     :return: None
-    分类器画图函数，可画出样本点和决策边界
-    '''
+    """
 
     # Set min and max values and give it some padding
     x_min, x_max = X[:, 0].min() - .5, X[:, 0].max() + .5
@@ -27,4 +26,6 @@ def plot_decision_boundary(pred_func, X, y):
     # Plot the contour and training examples
     plt.contourf(xx, yy, Z, cmap=plt.cm.Spectral)
     plt.scatter(X[:, 0], X[:, 1], s=40, c=y, cmap=plt.cm.Spectral)
+    if title:
+        plt.title(title)
     plt.show()

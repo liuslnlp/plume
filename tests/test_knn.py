@@ -1,28 +1,35 @@
-import os
-import sys
-
-sys.path.insert(0, os.path.abspath('.'))
-
-from mlearn.knn import ParallelKNClassifier
-from mlearn.utils import plot_decision_boundary
+from plume.knn import KNeighborClassifier
+from plume.utils import plot_decision_boundary
 import numpy as np
+import unittest
 
 
-def main():
-    train_x = np.array([[1, 1], [0.1, 0.1], [0.5, 0.7], [10, 10], [10, 11]])
-    train_y = np.array(['A', 'A', 'A', 'B', 'B'])
-    test_x = np.array([[11, 12], [12, 13], [11, 13], [0.05, 0.1]])
+class KNNTestCase(unittest.TestCase):
+    def setUp(self):
+        self._clf = KNeighborClassifier(3)
+        self._train_x = np.array([[1, 1],
+                                  [0.1, 0.1],
+                                  [0.5, 0.7],
+                                  [10, 10],
+                                  [10, 11]])
+        self._train_y = np.array(['A', 'A', 'A', 'B', 'B'])
+        self._test_x = np.array([[11, 12],
+                                 [12, 13],
+                                 [11, 13],
+                                 [0.05, 0.1]])
+        self._clf.fit(self._train_x, self._train_y)
+    def test_predict(self):
+        y_pred = self._clf.predict(self._test_x)
+        assert np.all(y_pred == self._train_y[:-1])
 
-    k = ParallelKNClassifier(3)
-    k.fit(train_x, train_y)
-    print(k.predict(test_x))
+def test_knn():
     import sklearn.datasets
-    np.random.seed(0)
     X, y = sklearn.datasets.make_moons(200, noise=0.20)
-    clf = ParallelKNClassifier()
+    y = 2 * y - 1
+    clf = KNeighborClassifier(3)
     clf.fit(X, y)
-    plot_decision_boundary(clf.predict, X, y)
-
+    plot_decision_boundary(clf.predict, X, y, 'K Neighbor Classifier')
 
 if __name__ == '__main__':
-    main()
+    # unittest.main()
+    test_knn()

@@ -1,25 +1,20 @@
-import os
-import sys
-
-sys.path.insert(0, os.path.abspath('.'))
-
-from mlearn.network import BPNetWork
+from plume.network import FullyConnNet
+from plume.utils import plot_decision_boundary
+import sklearn.datasets
 import numpy as np
 
+def test_mlp():
+    X, y = sklearn.datasets.make_moons(200, noise=0.20)
+    n = FullyConnNet((2, 3, 1), activation='relu', epochs=1000, learning_rate=0.01)
+    n.fit(X, y)
+    def tmp(X):
+        sign = np.vectorize(lambda x: 1 if x >= 0.5 else 0)
+        ans = sign(n.predict(X))
+        return ans
 
-def main():
-    train_x = np.array([
-        [0, 0],
-        [0, 1],
-        [1, 0],
-        [1, 1]
-    ])
-    train_y = np.array([[0], [1], [1], [0]])
-    n = BPNetWork((2, 2, 1))
-    n.fit(train_x, train_y, 10000, 0.1)
-    for x in train_x:
-        print(x, n.predict_one(x))
+    plot_decision_boundary(tmp, X, y, 'Neural Network')
+
 
 
 if __name__ == '__main__':
-    main()
+    test_mlp()
