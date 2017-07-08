@@ -19,6 +19,7 @@ plume，一个轻量级机器学习库，内含常见机器学习算法的Python
 Input:
 ```python
 from plume.utils import plot_decision_boundary
+from plume.svm import SVC
 
 X, y = sklearn.datasets.make_moons(200, noise=0.20)
 y = 2 * y - 1
