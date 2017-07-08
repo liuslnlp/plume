@@ -1,10 +1,12 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
+
 def check_X_y(X, y):
     if x.shape[0] != y.shape[0]:
         raise ValueError('Shape does not match')
     return X, y
+
 
 def plot_decision_boundary(pred_func, X, y, title=None):
     """分类器画图函数，可画出样本点和决策边界
