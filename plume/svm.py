@@ -37,6 +37,11 @@ class LinearSVC(object):
         return result['x']
 
     def fit(self, X, y):
+        """
+        :param X_: shape = [n_samples, n_features] 
+        :param y: shape = [n_samples] 
+        :return: self
+        """
         self.X = X
         self.y = y
         self.alpha = self.optimize()
@@ -61,10 +66,22 @@ class SVC(object):
 
     @staticmethod
     def polynomial(x, X, p):
+        """多项式核函数
+        :param x: 一个样本
+        :param X: 样本集
+        :param p: 指数
+        :return: 
+        """
         return (x @ X.T + 1) ** p
 
     @staticmethod
     def gaussian(x, X, var):
+        """高斯核函数
+        :param x: 一个样本
+        :param X: 样本集
+        :param var: 方差
+        :return: 
+        """
         return np.exp(-np.linalg.norm(x - X, axis=1) ** 2 / (2 * var * var))
 
     def get_wx(self, x, alpha):
@@ -72,12 +89,19 @@ class SVC(object):
 
     @jit
     def minfunc(self, alpha: np.array) -> float:
+        """优化的目标函数
+        :param alpha: 拉格朗日乘子
+        :return: 
+        """
         ans = 0.0
         for i in range(self.X.shape[0]):
             ans += alpha[i] * self.y[i] * self.get_wx(self.X[i], alpha)
         return 0.5 * ans - alpha.sum()
 
     def cal_bias(self) -> float:
+        """求偏置
+        :return: bias
+        """
         for i, alpha in enumerate(self.alpha):
             if 0 < alpha < self.C:
                 ans = self.y[i]
@@ -94,6 +118,11 @@ class SVC(object):
         return result['x']
 
     def fit(self, X, y):
+        """
+        :param X_: shape = [n_samples, n_features] 
+        :param y: shape = [n_samples] 
+        :return: self
+        """
         self.X = X
         self.y = y
         self.alpha = self.optimize()

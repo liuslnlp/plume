@@ -96,6 +96,11 @@ class DecisionTreeClassifier(object):
         return TreeNode(feature_index, val, left_branch, right_branch, None)
 
     def fit(self, X, y):
+        """
+        :param X_: shape = [n_samples, n_features] 
+        :param y: shape = [n_samples] 
+        :return: self
+        """
         features = np.arange(X.shape[1])
         X_ = np.c_[X, y]
         self.root = self.build(X_, features)
@@ -108,6 +113,10 @@ class DecisionTreeClassifier(object):
         return p.label
 
     def predict(self, X):
+        """
+        :param X: shape = [n_samples, n_features] 
+        :return: shape = [n_samples]
+        """
         return np.array([self.predict_one(x) for x in X])
 
 

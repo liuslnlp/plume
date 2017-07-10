@@ -1,5 +1,4 @@
 import numpy as np
-from collections import defaultdict
 
 
 class KNeighborClassifier(object):
@@ -12,26 +11,39 @@ class KNeighborClassifier(object):
         :param metric: 距离函数的度量，metric=1时为曼哈顿距离，metric=2
         时为欧氏距离
         """
-        self.x_train = None
-        self.y_train = None
+        self.X = None
+        self.y = None
         self.n_neighbors = n_neighbors
         self.metric = metric
 
-    def fit(self, x_train, y_train):
-        self.x_train = x_train.astype(np.float32)
-        self.y_train = y_train
-        if self.n_neighbors > x_train.shape[0]:
-            self.n_neighbors = x_train.shape[0]
+    def fit(self, X, y):
+        """
+        :param X_: shape = [n_samples, n_features] 
+        :param y: shape = [n_samples] 
+        :return: self
+        """
+        self.X = X.astype(np.float32)
+        self.y = y
+        if self.n_neighbors > X.shape[0]:
+            self.n_neighbors = X.shape[0]
 
     def predict_one(self, x):
-        distances = np.linalg.norm(self.x_train - x, self.metric, axis=1)
+        """
+        :param x: shape = [n_features]
+        :return: predict
+        """
+        distances = np.linalg.norm(self.X - x, self.metric, axis=1)
         neighbors = np.argpartition(-distances, self.n_neighbors)[:self.n_neighbors]
-        neighbors_label = self.y_train[neighbors]
+        neighbors_label = self.y[neighbors]
         labels, counts = np.unique(neighbors_label, return_counts=True)
         return labels[np.argmax(counts)]
 
-    def predict(self, x_test):
-        return np.array([self.predict_one(i) for i in x_test])
+    def predict(self, X):
+        """
+        :param X: shape = [n_samples, n_features] 
+        :return: shape = [n_samples]
+        """
+        return np.array([self.predict_one(i) for i in X])
 
 
 

@@ -5,14 +5,10 @@ import numpy as np
 
 def test_gaussiannb():
     iris = load_iris()
-
     clf = GaussianNB()
-
     clf.fit(iris.data, iris.target)
-
     y_pred = clf.predict(iris.data)
     print(y_pred)
-
     clf_ = SKGaussianNB()
     clf_.fit(iris.data, iris.target)
     print(clf_.predict(iris.data))

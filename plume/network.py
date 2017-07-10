@@ -31,7 +31,14 @@ def drelu(x):
 
 
 class FullyConnNet(object):
-    def __init__(self, layers, activation, epochs, learning_rate):
+    """多层感知机，BP 算法训练"""
+    def __init__(self, layers, activation='tanh', epochs=2000, learning_rate=0.01):
+        """
+        :param layers: 网络层结构
+        :param activation: 激活函数
+        :param epochs: 迭代轮次
+        :param learning_rate: 学习率 
+        """
         self.epochs = epochs
         self.learning_rate = learning_rate
         self.layers = []
@@ -61,13 +68,21 @@ class FullyConnNet(object):
             self.dactivation = drelu
 
     def fit(self, X, y):
-
+        """
+        :param X_: shape = [n_samples, n_features] 
+        :param y: shape = [n_samples] 
+        :return: self
+        """
         for _ in range(self.epochs * X.shape[0]):
             i = np.random.randint(X.shape[0])
             self.update(X[i])
             self.back_propagate(y[i])
 
     def predict(self, X):
+        """
+        :param X: shape = [n_samples, n_features] 
+        :return: shape = [n_samples]
+        """
         self.update(X)
         return self.layers[-1].copy()
 

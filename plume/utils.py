@@ -10,7 +10,7 @@ def check_X_y(X, y):
 
 def plot_decision_boundary(pred_func, X, y, title=None):
     """分类器画图函数，可画出样本点和决策边界
-    :param pred_func: predicet函数
+    :param pred_func: predict函数
     :param X: 训练集X
     :param y: 训练集Y
     :return: None

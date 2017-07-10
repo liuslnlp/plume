@@ -4,6 +4,7 @@ from functools import partial
 
 
 class AdaBoostClassifier(object):
+    """AdaBoost算法"""
     def __init__(self, clf, epoch: int = 5, **kwargs):
         """
         :param clf: 所采用的基分类器
@@ -34,10 +35,18 @@ class AdaBoostClassifier(object):
         return 0.5 * np.log((1 - error) / error)
 
     def update_weight(self, alpha, y_pred):
+        """更新权重
+        :param alpha: alpha
+        :param y_pred: y的预测值
+        :return: 
+        """
         new_weight = self.weight * np.exp(-alpha * self.y * y_pred)
         self.weight = new_weight / new_weight.sum()
 
     def update_train_set(self):
+        """通过改变数据集来体现权重对基分类器的影响
+        :return: 
+        """
         coef = (self.weight * 50).astype(np.int64)
         self.X = np.zeros(np.sum(coef))
         self.y = np.zeros(np.sum(coef))
@@ -82,24 +91,36 @@ class AdaBoostClassifier(object):
 
 
 class BaggingClassifier(object):
+    """Bagging算法"""
     def __init__(self, basics):
+        """
+        :param basics: 实例化后的基分类器 shape = [n_classifiers]
+        """
         self.basics = basics
 
     def choose_set(self, X_):
+        """重新抽样
+        :param X_: 原数据集, shape = [n_samples, n_features + 1]
+        :return: new data set
+        """
         indexs = np.random.choice(X_.shape[0], X_.shape[0])
         return X_[indexs]
 
     @staticmethod
     def vote(labels):
-        """
+        """投票选择，将给定类别簇中所占比重最大的类别选出
         :param labels: 给定列表
         :return: 列表中所占比重最大的类别
-        投票选择，将给定类别簇中所占比重最大的类别选出
         """
         labels, labels_count = np.unique(labels, return_counts=True)
         return labels[np.argmax(labels_count)]
 
     def fit(self, X, y):
+        """
+        :param X_: shape = [n_samples, n_features] 
+        :param y: shape = [n_samples] 
+        :return: self
+        """
         X_ = np.c_[X, y]
         for i in self.basics:
             new_X_ = self.choose_set(X_)
@@ -111,15 +132,21 @@ class BaggingClassifier(object):
         return self.vote(labels)
 
     def predict(self, X):
+        """
+        :param X: shape = [n_samples, n_features] 
+        :return: shape = [n_samples]
+        """
         tmp = np.array([clf.predict(X) for clf in self.basics]).T
         return np.array([self.vote(i) for i in tmp])
 
 
 class _Tree(DecisionTreeClassifier):
-    """随机森林的基分类器，继承自决策树
-    """
+    """随机森林的基分类器，继承自决策树"""
 
     def __init__(self, max_depth=None):
+        """
+        :param max_depth: 最大深度
+        """
         super().__init__(max_depth)
 
     @staticmethod
@@ -141,13 +168,27 @@ class _Tree(DecisionTreeClassifier):
 
 
 class RandomForestsClassifier(object):
+    """随机森林分类器"""
     def __init__(self, tree_num=5, max_depth=6):
+        """
+        :param tree_num: 森林中树的个数
+        :param max_depth: 单个树的最大深度
+        """
         trees = [_Tree(max_depth) for _ in range(tree_num)]
         self.clf = BaggingClassifier(trees)
 
     def fit(self, X, y):
+        """
+        :param X_: shape = [n_samples, n_features] 
+        :param y: shape = [n_samples] 
+        :return: self
+        """
         self.clf.fit(X, y)
         return self
 
     def predict(self, X):
+        """
+        :param X: shape = [n_samples, n_features] 
+        :return: shape = [n_samples]
+        """
         return self.clf.predict(X)

@@ -2,6 +2,9 @@ import numpy as np
 
 
 class LinearRegression(object):
+    """
+    Linear Regression
+    """
     def __init__(self):
         self.weight = None
 
@@ -16,6 +19,10 @@ class LinearRegression(object):
         return self
 
     def predict(self, X):
+        """
+        :param X: shape = [n_samples, n_features] 
+        :return: shape = [n_samples]
+        """
         X_ = np.c_[X, np.ones(X.shape[0])]
         return X_ @ self.weight
 

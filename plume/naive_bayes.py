@@ -10,7 +10,7 @@ class GaussianNB(object):
     @staticmethod
     def gaussfunc(x, mu, singma):
         """高斯函数
-        :param x: 
+        :param x: 数据集
         :param mu: 均值 
         :param singma: 方差 
         :return: 
@@ -20,6 +20,11 @@ class GaussianNB(object):
         return numerator / np.sqrt(2 * np.pi * sqsingma)
 
     def fit(self, X, y):
+        """
+        :param X_: shape = [n_samples, n_features] 
+        :param y: shape = [n_samples] 
+        :return: self
+        """
         self.classes, self.classes_count = np.unique(y, return_counts=True)
         self.mean = np.zeros((self.classes_count.shape[0],
                               X.shape[1]), dtype=np.float64)
@@ -30,7 +35,13 @@ class GaussianNB(object):
             self.mean[i, :] = np.mean(x_i, axis=0)
             self.var[i, :] = np.var(x_i, axis=0)
 
+        return self
+
     def predict(self, X):
+        """
+        :param X: shape = [n_samples, n_features] 
+        :return: shape = [n_samples]
+        """
         likelihood = []
         for i in range(self.classes.shape[0]):
             likelihood.append(self.classes_count[i] *
@@ -49,6 +60,11 @@ class MultinomialNB(object):
         self.alpha = alpha
 
     def fit(self, X, y):
+        """
+        :param X_: shape = [n_samples, n_features] 
+        :param y: shape = [n_samples] 
+        :return: self
+        """
         labelbin = LabelBinarizer()
         Y = labelbin.fit_transform(y)
         self.classes = labelbin.classes_
@@ -65,5 +81,9 @@ class MultinomialNB(object):
                                  np.log(smoothed_cc.reshape(-1, 1)))
 
     def predict(self, X):
+        """
+        :param X: shape = [n_samples, n_features] 
+        :return: shape = [n_samples]
+        """
         likelihood = X @ self.feature_log_prob.T
         return np.argmax(likelihood, axis=1)
