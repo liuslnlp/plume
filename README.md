@@ -9,7 +9,12 @@ plume，一个轻量级机器学习库。包含常见机器学习算法的Python
 
 
 ## 快速入门
+对于训练集`X`，标签集合`y`，算法`clf`，测试集合`X_test`，使用`clf.fit(X, y)`训练数据，使用`clf.predcit(X_test)`对测试集进行预测。
+
+
+
 Input:
+
 ```python
 from plume.utils import plot_decision_boundary
 from plume.svm import SVC
