@@ -2,7 +2,11 @@ import numpy as np
 
 
 class PCA(object):
+    """主成分分析法"""
     def __init__(self, n_components=2):
+        """
+        :param n_components: 簇的个数
+        """
         self.n_components = n_components
 
     def check_X(self, X):
@@ -16,6 +20,7 @@ class PCA(object):
 
 
 class MDS(object):
+    """MDS 降维算法"""
     def __init__(self, n_components=2):
         self.n_components = n_components
 
