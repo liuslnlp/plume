@@ -5,7 +5,8 @@ import numpy as np
 
 def test_mlp():
     X, y = sklearn.datasets.make_moons(200, noise=0.20)
-    n = FullyConnNet((2, 3, 1), activation='relu', epochs=1000, learning_rate=0.01)
+    y = y.reshape((-1, 1))
+    n = FullyConnNet((2, 3, 1), activation='tanh', epochs=300, learning_rate=0.01)
     n.fit(X, y)
     def tmp(X):
         sign = np.vectorize(lambda x: 1 if x >= 0.5 else 0)

@@ -32,7 +32,10 @@ def drelu(x):
 
 class FullyConnNet(object):
     """多层感知机，BP 算法训练"""
-    def __init__(self, layers, activation='tanh', epochs=2000, learning_rate=0.01):
+    def __init__(self,
+                 layers,
+                 activation='tanh',
+                 epochs=2000, batch_size=1, learning_rate=0.01):
         """
         :param layers: 网络层结构
         :param activation: 激活函数
@@ -43,7 +46,7 @@ class FullyConnNet(object):
         self.learning_rate = learning_rate
         self.layers = []
         self.weights = []
-        # self.sign = np.vectorize(lambda x: 1 if x >= 0.5 else 0)
+        self.batch_size = batch_size
 
         for i in range(0, len(layers) - 1):
             weight = np.random.random((layers[i], layers[i + 1]))
@@ -74,7 +77,8 @@ class FullyConnNet(object):
         :return: self
         """
         for _ in range(self.epochs * X.shape[0]):
-            i = np.random.randint(X.shape[0])
+            i = np.random.choice(X.shape[0], self.batch_size)
+            # i = np.random.randint(X.shape[0])
             self.update(X[i])
             self.back_propagate(y[i])
 
@@ -94,12 +98,16 @@ class FullyConnNet(object):
 
     def back_propagate(self, y):
         errors = y - self.layers[-1]
-        gradients = [self.dactivation(self.layers[-1]) * errors]
+
+        gradients = [(self.dactivation(self.layers[-1]) * errors).sum(axis=0)]
+
         self.thresholds[-1] -= self.learning_rate * gradients[-1]
         for i in range(len(self.weights) - 1, 0, -1):
-            gradients.append(gradients[-1] @ self.weights[i].T *
-                             self.dactivation(self.layers[i]))
+            tmp = np.sum(gradients[-1] @ self.weights[i].T * self.dactivation(self.layers[i]), axis=0)
+            gradients.append(tmp)
+
             self.thresholds[i - 1] -= self.learning_rate * gradients[-1]
         gradients.reverse()
         for i in range(len(self.weights)):
-            self.weights[i] += self.learning_rate * self.layers[i].reshape((-1, 1)) * gradients[i]
+            tmp = np.sum(self.layers[i], axis=0)
+            self.weights[i] += self.learning_rate * tmp.reshape((-1, 1)) * gradients[i]
