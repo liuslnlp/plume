@@ -35,7 +35,7 @@ class FullyConnNet(object):
     def __init__(self,
                  layers,
                  activation='tanh',
-                 epochs=2000, batch_size=1, learning_rate=0.01):
+                 epochs=20, batch_size=1, learning_rate=0.01):
         """
         :param layers: 网络层结构
         :param activation: 激活函数
@@ -76,7 +76,7 @@ class FullyConnNet(object):
         :param y: shape = [n_samples] 
         :return: self
         """
-        for _ in range(self.epochs * X.shape[0]):
+        for _ in range(self.epochs * (X.shape[0] // self.batch_size)):
             i = np.random.choice(X.shape[0], self.batch_size)
             # i = np.random.randint(X.shape[0])
             self.update(X[i])
@@ -105,9 +105,8 @@ class FullyConnNet(object):
         for i in range(len(self.weights) - 1, 0, -1):
             tmp = np.sum(gradients[-1] @ self.weights[i].T * self.dactivation(self.layers[i]), axis=0)
             gradients.append(tmp)
-
-            self.thresholds[i - 1] -= self.learning_rate * gradients[-1]
+            self.thresholds[i - 1] -= self.learning_rate * gradients[-1] / self.batch_size
         gradients.reverse()
         for i in range(len(self.weights)):
-            tmp = np.sum(self.layers[i], axis=0)
+            tmp = np.mean(self.layers[i], axis=0)
             self.weights[i] += self.learning_rate * tmp.reshape((-1, 1)) * gradients[i]
