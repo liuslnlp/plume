@@ -32,6 +32,7 @@ def drelu(x):
 
 class FullyConnNet(object):
     """多层感知机，BP 算法训练"""
+
     def __init__(self,
                  layers,
                  activation='tanh',
