@@ -55,19 +55,22 @@ class LogisticRegression(object):
 
     def diff(self, X_, y, p):
         """Get first derivative
-        :param X_: shape = [n_samples + 1, n_features] 
+        :param X_: shape = [n_samples, n_features + 1] 
         :param y: shape = [n_samples] 
         :param p: shape = [n_samples] P(y=1 | x)
-        :return:  shape = [n_features] first derivative
+        :return:  shape = [n_features + 1] first derivative
         """
         return -(y - p) @ X_
 
-    def secdiff(self, p):
+    def secdiff(self, X_, p):
         """Get second derivative
         :param p: shape = [n_samples] P(y=1 | x)
-        :return: shape = [n_features] second derivative
+        :return: shape = [n_features + 1, n_features + 1] second derivative
         """
-        return p * (1 - p) @ self.H_mat.T
+        hess = np.zeros((X_.shape[1], X_.shape[1]))
+        for i in range(X_.shape[0]):
+            hess += self.X_XT[i] * p[i] * (1 - p[i])
+        return hess
 
     def newton_method(self, X_, y):
         """Newton Method to calculate weight
@@ -76,11 +79,18 @@ class LogisticRegression(object):
         :return: None
         """
         self.weight = np.ones(X_.shape[1])
-        self.H_mat = (X_ * X_).T
+        self.X_XT = []
+        for i in range(X_.shape[0]):
+            t = X_[i, :].reshape((-1, 1))
+            self.X_XT.append(t @ t.T)
+
         for _ in range(self.max_epoch):
             y_eq_true = self.p_yeq1(X_)
             first_der = self.diff(X_, y, y_eq_true)
-            new_weight = self.weight - first_der / self.secdiff(y_eq_true)
+
+            hess = self.secdiff(X_, y_eq_true)
+            new_weight = self.weight - (np.linalg.inv(hess) @ first_der.reshape((-1, 1))).flatten()
+
             if np.linalg.norm(new_weight - self.weight) <= self.error:
                 break
             self.weight = new_weight
