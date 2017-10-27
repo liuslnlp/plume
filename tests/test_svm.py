@@ -1,4 +1,4 @@
-from plume.svm import LinearSVC, SVC
+from plume.svm import LinearSVC, SVC, ExpSVC
 from plume.utils import plot_decision_boundary
 import sklearn.datasets
 import numpy as np
@@ -28,6 +28,14 @@ def test_svc():
     clf.fit(X, y)
     plot_decision_boundary(clf.predict, X, y, 'Support Vector Machine')
 
+def test_expSVC():
+    X, y = sklearn.datasets.make_moons(200, noise=0.20)
+    y = 2 * y - 1
+    clf = ExpSVC(C=4, kernel='poly', p=3)
+    clf.fit(X, y)
+    plot_decision_boundary(clf.predict, X, y, 'Support Vector Machine')
+
 if __name__ == '__main__':
     # test_linearsvc()
-    test_svc()
+    # test_svc()
+    test_expSVC()

@@ -1,13 +1,38 @@
-from plume.linear_model import LinearRegression, LogisticRegression
-from plume.utils import plot_decision_boundary
+from plume.linear_model import LinearRegression, LogisticRegression, Lasso, Ridge
+from plume.utils import plot_decision_boundary, gen_reg_data
+import matplotlib.pyplot as plt
 import numpy as np
 
 
 def test_linear_regression():
     clf = LinearRegression()
-    X = np.array([[1, 3], [2, 5], [3, 7], [4, 9]])
-    clf.fit(X[:, 0], X[:, 1])
-    print(clf.predict(np.array([[5], [6], [7], [8]])))
+    X, y = gen_reg_data()
+    clf.fit(X, y)
+    plt.plot(X, y, '.')
+    X_axis = np.arange(-5, 75, 0.1)
+    plt.plot(X_axis, clf.predict(X_axis))
+    plt.title("Linear Regression")
+    plt.show()
+
+def test_lasso():
+    clf = Lasso()
+    X, y = gen_reg_data()
+    clf.fit(X, y)
+    plt.plot(X, y, '.')
+    X_axis = np.arange(-5, 75, 0.1).reshape((-1, 1))
+    plt.plot(X_axis, clf.predict(X_axis))
+    plt.title("Lasso")
+    plt.show()
+
+def test_ridge():
+    clf = Ridge()
+    X, y = gen_reg_data()
+    clf.fit(X, y)
+    plt.plot(X, y, '.')
+    X_axis = np.arange(-5, 75, 0.1)
+    plt.plot(X_axis, clf.predict(X_axis.reshape((-1, 1))))
+    plt.title("Lasso")
+    plt.show()
 
 def test_lr():
     clf = LogisticRegression()
@@ -18,5 +43,6 @@ def test_lr():
     plot_decision_boundary(clf.predict, X, y, 'Logistic Regression')
 
 if __name__ == '__main__':
-    test_lr()
+    test_lasso()
+    # test_ridge()
     # test_linear_regression()

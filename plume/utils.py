@@ -3,9 +3,17 @@ import matplotlib.pyplot as plt
 
 
 def check_X_y(X, y):
-    if x.shape[0] != y.shape[0]:
+    if X.shape[0] != y.shape[0]:
         raise ValueError('Shape does not match')
     return X, y
+
+
+def gen_reg_data():
+    X = np.arange(0, 45, 0.1)
+    X = X + np.random.random(size=X.shape[0]) * 20
+    y = 2 * X + np.random.random(size=X.shape[0]) * 20 + 10
+    return X.reshape((-1, 1)), y
+
 
 
 def plot_decision_boundary(pred_func, X, y, title=None):
@@ -28,6 +36,7 @@ def plot_decision_boundary(pred_func, X, y, title=None):
     # Plot the contour and training examples
     plt.contourf(xx, yy, Z, cmap=plt.cm.Spectral)
     plt.scatter(X[:, 0], X[:, 1], s=40, c=y, cmap=plt.cm.Spectral)
+
     if title:
         plt.title(title)
     plt.show()
