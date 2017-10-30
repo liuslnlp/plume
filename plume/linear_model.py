@@ -1,78 +1,33 @@
+from .preprocessing import StandardScaler
 import numpy as np
+from abc import ABCMeta, abstractmethod
 
 
-class LinearRegression(object):
+class LinearModel(metaclass=ABCMeta):
     """
-    Linear Regression
+    Abstract base class of Linear Model.
     """
-
     def __init__(self):
-        self.coef_ = None
+        self.scaler = StandardScaler()
 
+    @abstractmethod
     def fit(self, X, y):
-        """
-        :param X_: shape = (n_samples + 1, n_features)
-        :param y: shape = (n_samples])
-        :return: self
-        """
-        X_ = np.c_[np.ones(X.shape[0]), X]
-        self.coef_ = np.linalg.inv(X_.T @ X_) @ X_.T @ y
-        return self
+        """fit func"""
 
     def predict(self, X):
-        """
-        :param X: shape = (n_samples, n_features] 
-        :return: shape = (n_samples]
-        """
+        if not hasattr(self, 'coef_'):
+            raise Exception('Please run `fit` before predict')
+        X = self.scaler.transform(X)
         X = np.c_[np.ones(X.shape[0]), X]
         return X @ self.coef_
 
-
-class Lasso(object):
+class LinearRegression(LinearModel):
     """
-    Lasso Regression
+    Linear Regression.
     """
 
-    def __init__(self, alpha=1.0, max_iter=1000):
-        self.alpha = alpha
-        self.max_iter = max_iter
-        self.coef_ = None
-        self.intercept_ = None
-
-    def _soft_thresholding_operator(self, x, lamda):
-        if x > 0 and lamda < abs(x):
-            return x - lamda
-        elif x < 0 and lamda < abs(x):
-            return x + lamda
-        else:
-            return 0
-
-    def fit(self, X, y):
-        X = np.column_stack((np.ones(len(X)), X))
-        standopt = np.sum(X ** 2, axis=0)
-        beta = np.zeros(X.shape[1])
-        lamda = self.alpha * X.shape[0]
-
-        beta[0] = np.sum(y - np.dot(X[:, 1:], beta[1:])) / (X.shape[0])
-        for iteration in range(self.max_iter):
-            tmp_beta = beta.copy()
-            for j in range(1, len(beta)):
-                tmp_beta[j] = 0.0
-                arg1 = X[:, j] @ (y - X @ tmp_beta)
-                beta[j] = self._soft_thresholding_operator(arg1, lamda) / standopt[j]
-            beta[0] = np.sum(y - np.dot(X[:, 1:], beta[1:])) / (X.shape[0])
-        self.intercept_ = beta[0]
-        self.coef_ = beta[1:]
-        return self
-
-    def predict(self, X):
-        y = np.dot(X, self.coef_) + self.intercept_
-        return y
-
-
-class Ridge(object):
-    def __init__(self, alpha=1.0):
-        self.alpha = alpha
+    def __init__(self):
+        super().__init__()
 
     def fit(self, X, y):
         """
@@ -80,17 +35,68 @@ class Ridge(object):
         :param y: shape = (n_samples])
         :return: self
         """
-        X_ = np.c_[np.ones(X.shape[0]), X]
-        self.weight = np.linalg.inv(X_.T @ X_ + self.alpha * np.eye(X_.shape[1])) @ X_.T @ y
+        self.scaler.fit(X)
+        X = self.scaler.transform(X)
+        X = np.c_[np.ones(X.shape[0]), X]
+        self.coef_ = np.linalg.inv(X.T @ X) @ X.T @ y
         return self
 
-    def predict(self, X):
-        """
-        :param X: shape = (n_samples, n_features] 
-        :return: shape = (n_samples]
-        """
+
+class Lasso(LinearModel):
+    """
+    Lasso Regression, training by Coordinate Descent.
+    """
+    def __init__(self, alpha=1.0, n_iter=1000, e=0.1):
+        self.alpha = alpha
+        self.n_iter = n_iter
+        self.e = e
+        super().__init__()
+
+    def fit(self, X, y):
+        self.scaler.fit(X)
+        X = self.scaler.transform(X)
         X = np.c_[np.ones(X.shape[0]), X]
-        return X @ self.weight
+        self.coef_ = np.zeros(X.shape[1])
+        for _ in range(self.n_iter):
+            z = np.sum(X * X, axis=0)
+            tmp = np.zeros(X.shape[1])
+            for k in range(X.shape[1]):
+                wk = self.coef_[k]
+                self.coef_[k] = 0
+                p_k = X[:, k] @ (y - X @ self.coef_)
+                if p_k < -self.alpha / 2:
+                    w_k = (p_k + self.alpha / 2) / z[k]
+                elif p_k > self.alpha / 2:
+                    w_k = (p_k - self.alpha / 2) / z[k]
+                else:
+                    w_k = 0
+                tmp[k] = w_k
+                self.coef_[k] = wk
+            if np.linalg.norm(self.coef_ - tmp) < self.e:
+                break
+            self.coef_ = tmp
+        return self
+
+class Ridge(LinearModel):
+    """
+    Ridge Regression.
+    """
+
+    def __init__(self, alpha=1.0):
+        self.alpha = alpha
+        super().__init__()
+
+    def fit(self, X, y):
+        """
+        :param X_: shape = (n_samples + 1, n_features)
+        :param y: shape = (n_samples])
+        :return: self
+        """
+        self.scaler.fit(X)
+        X = self.scaler.transform(X)
+        X_ = np.c_[np.ones(X.shape[0]), X]
+        self.coef_ = np.linalg.inv(X_.T @ X_ + self.alpha * np.eye(X_.shape[1])) @ X_.T @ y
+        return self
 
 
 class LogisticRegression(object):
@@ -108,7 +114,7 @@ class LogisticRegression(object):
         """
         self.error = error
         self.max_epoch = max_epoch
-        self.weight = None
+        self.coef_ = None
         self.sign = np.vectorize(lambda x: 1 if x >= 0.5 else 0)
 
     def p_func(self, X_):
@@ -116,7 +122,7 @@ class LogisticRegression(object):
         :param X_: shape = (n_samples + 1, n_features)
         :return: shape = (n_samples)
         """
-        tmp = np.exp(self.weight @ X_.T)
+        tmp = np.exp(self.coef_ @ X_.T)
         return tmp / (1 + tmp)
 
     def diff(self, X_, y, p):
@@ -144,7 +150,7 @@ class LogisticRegression(object):
         :param y: shape = (n_samples)
         :return: None
         """
-        self.weight = np.ones(X_.shape[1])
+        self.coef_ = np.ones(X_.shape[1])
         self.X_XT = []
         for i in range(X_.shape[0]):
             t = X_[i, :].reshape((-1, 1))
@@ -154,11 +160,11 @@ class LogisticRegression(object):
             p = self.p_func(X_)
             diff = self.diff(X_, y, p)
             hess = self.hess_mat(X_, p)
-            new_weight = self.weight - (np.linalg.inv(hess) @ diff.reshape((-1, 1))).flatten()
+            new_weight = self.coef_ - (np.linalg.inv(hess) @ diff.reshape((-1, 1))).flatten()
 
-            if np.linalg.norm(new_weight - self.weight) <= self.error:
+            if np.linalg.norm(new_weight - self.coef_) <= self.error:
                 break
-            self.weight = new_weight
+            self.coef_ = new_weight
 
     def fit(self, X, y):
         """

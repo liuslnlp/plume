@@ -77,7 +77,7 @@ class GaussianMixture(object):
     def prob_density(self, mu, sigma):
         mat = []
         for i in range(self.n_components):
-            tmp = [(x - mu[i]) @ np.linalg.pinv(sigma[i]) @ (x - mu[i]).T for x in self.X]
+            tmp = [(x - mu[i]) @ np.linalg.pinv(sigma[i]) @ (x - mu[i]) for x in self.X]
             mat.append(tmp)
         mat = np.array(mat).T
         numerator = np.exp(-0.5 * np.array(mat))
@@ -92,10 +92,12 @@ class GaussianMixture(object):
         tmp = prob * self.alphas
         return tmp / tmp.sum(axis=0)
 
+
     def fit(self, X):
         self.X = X
         self.means = X[np.random.choice(X.shape[0], self.n_components)]
-        self.covmat = np.array([np.eye(X.shape[1]) * 0.1] * self.n_components)
+        self.covmat = np.array([np.eye(X.shape[1])] * self.n_components)
+
         for _ in range(self.n_iter):
             gamma = self.post_prob()
             for i in range(self.n_components):

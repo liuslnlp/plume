@@ -31,7 +31,7 @@ def test_ridge():
     plt.plot(X, y, '.')
     X_axis = np.arange(-5, 75, 0.1)
     plt.plot(X_axis, clf.predict(X_axis.reshape((-1, 1))))
-    plt.title("Lasso")
+    plt.title("Ridge")
     plt.show()
 
 def test_lr():
