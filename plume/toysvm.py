@@ -1,3 +1,7 @@
+"""
+利用 SMO 算法实现的线性 SVM 和非线性 SVM.
+"""
+
 import numpy as np
 from functools import partial
 
@@ -43,9 +47,7 @@ class LinearSVC(object):
 
     def inner_loop(self, i):
         ei = self.error(i)
-        # self.err_cache[i, :] = [1, ei]
 
-        # 利用数理逻辑化简
         if not (self.y[i] * ei < -self.tol and self.alphas[i] < self.C or \
         self.y[i] * ei > self.tol and self.alphas[i] > 0):
             return 0
@@ -191,8 +193,6 @@ class SVC(object):
     def inner_loop(self, i):
         ei = self.error(i)
 
-
-        # 利用数理逻辑化简
         if not (self.y[i] * ei < -self.tol and self.alphas[i] < self.C or \
         self.y[i] * ei > self.tol and self.alphas[i] > 0):
             return 0

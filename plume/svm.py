@@ -1,3 +1,8 @@
+"""
+利用数值优化算法实现的 SVM，在 toysvm.py 中有对应的
+SMO 算法实现。
+"""
+
 import numpy as np
 import math
 import scipy.optimize as opt
