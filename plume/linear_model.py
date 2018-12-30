@@ -183,3 +183,34 @@ class LogisticRegression(object):
         """
         X_ = np.c_[np.ones(X.shape[0]), X]
         return self.sign(self.p_func(X_))
+
+
+# 2018/12/30 补充：
+# 基于梯度下降算法的逻辑回归
+class LogisticRegressionGD(object):
+    def __init__(self, learning_rate=0.05, error=0.05, max_iter=500):
+        self.alpha = learning_rate
+        self.error = error
+        self.sign = np.vectorize(lambda x: 1 if x >= 0.5 else 0)
+        self.max_iter = max_iter
+        self.scaler = StandardScaler()
+
+    def fit(self, X, y):
+        X = self.scaler.fit_transform(X)
+        X = np.c_[np.ones(X.shape[0]), X]
+        self.coef_ = np.ones(X.shape[1])
+        for i in range(self.max_iter):
+            grad = (1 / X.shape[0]) * (y - self.sigmoid(X)) @ X
+            if np.linalg.norm(grad) <= self.error:
+                break
+            else:
+                self.coef_ += self.alpha * grad
+
+    def sigmoid(self, X):
+        exp = np.exp(X @ self.coef_)
+        return exp / (1 + exp)
+
+    def predict(self, X):
+        X = self.scaler.transform(X)
+        X = np.c_[np.ones(X.shape[0]), X]
+        return self.sign(self.sigmoid(X))

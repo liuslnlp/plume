@@ -80,24 +80,24 @@ class MLPClassifier(object):
         for _ in range(self.epochs * (X.shape[0] // self.batch_size)):
             i = np.random.choice(X.shape[0], self.batch_size)
             # i = np.random.randint(X.shape[0])
-            self.update(X[i])
-            self.back_propagate(y[i])
+            self.forword(X[i])
+            self.backword(y[i])
 
     def predict(self, X):
         """
         :param X: shape = [n_samples, n_features] 
         :return: shape = [n_samples]
         """
-        self.update(X)
+        self.forword(X)
         return self.layers[-1].copy()
 
-    def update(self, inputs):
+    def forword(self, inputs):
         self.layers[0] = inputs
         for i in range(len(self.weights)):
             next_layer_in = self.layers[i] @ self.weights[i] - self.thresholds[i]
             self.layers[i + 1] = self.activation(next_layer_in)
 
-    def back_propagate(self, y):
+    def backword(self, y):
         errors = y - self.layers[-1]
 
         gradients = [(self.dactivation(self.layers[-1]) * errors).sum(axis=0)]
